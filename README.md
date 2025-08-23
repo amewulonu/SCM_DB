@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-# SCM_DB
-Supply Chain Database management
-=======
 # SCM_DB: Supply chain management project (pgAdmin)
 
 Overview
