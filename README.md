@@ -1,4 +1,4 @@
-SCM_DB: Supply chain management project (pgAdmin)
+# SCM_DB: Supply chain management project (pgAdmin)
 
 Overview
 SupplyChainDB project analyzes supply chain data to improve planning, shipment tracking, and logistics. Importing CSV data, designing a star schema with fact and dimension tables, cleaning and transforming data, and loading into MySQL. Advanced SQL stored procedures, CTEs, subqueries, and window functions, optimization enhances performance and insights.
