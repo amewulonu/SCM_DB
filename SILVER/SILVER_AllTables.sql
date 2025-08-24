@@ -1,5 +1,5 @@
 -- SILVER LAYER: Stores cleaned and standardized data
--- Task to create all tables in SILVER layer (Transformed, C)
+-- Task to create all tables in SILVER layer (Transformed, Cleaned)
 CREATE TABLE silver if not exist IS 'Cleaned and Transformed data ready for analysis';
 
 SELECT * FROM bronze.Product_v6; IS 'to view the table while you make transformations'
