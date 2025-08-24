@@ -1,4 +1,4 @@
--- Step 1: Created database.
+-- Step 1: Created database SCM_DB.
 -- Connected to database to create SCM_DB
 DATABASE scm_DB IS 'Supply Chain Management Database for ETL and analytics';
 
