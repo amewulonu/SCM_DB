@@ -1,15 +1,15 @@
 # SCM_DB: Supply chain management project (pgAdmin4)
 
 Overview
-SupplyChainDB project analyzes supply chain data to improve planning, shipment tracking, and logistics. Importing CSV data, designing a star schema with fact and dimension tables, cleaning and transforming data, and loading into MySQL. Advanced SQL stored procedures, CTEs, subqueries, and window functions, optimization enhances performance and insights.
+The SupplyChainDB project analyses supply chain data to enhance planning, shipment tracking, and logistics. Importing CSV data, designing a star schema with fact and dimension tables, cleaning and transforming data, and loading into PostgreSQL. Advanced SQL stored procedures, CTEs, subqueries, and window functions enhance performance and provide valuable insights.
 
-It encompasses full-cycle data engineering steps, from ingestion to optimisation, utilising MySQL. 
+It encompasses full-cycle data engineering steps, from ingestion to optimisation, utilising PostgreSQL. 
 ________________________________________
 ## Project Workflow
 1. Data Ingestion
 Tasks:
 •	Source: Provided CSV files
-•	Tools: MySQL Workbench, Medallion Architecture (Bronze → Silver → Gold)
+•	Tools: PostgreSQL pgAdmin4, Medallion Architecture (Bronze → Silver → Gold)
 •	Task: Load raw CSVs into BRONZE schema staging tables.
  
 2. Data Cleaning & Transformation
@@ -27,7 +27,7 @@ o	Product (from SupplyPlan_v2.csv)
 o	Vendor/Buyer/Carrier (from Shipment_v4.csv)
 o	Date (for various date fields)
 •	Normalise the data into fact and dimension tables. Design the tables to minimise redundancy and ensure data integrity.
-•	Use SQL to transform and load data from the raw tables into the star schema.
+•	Use PostgreSQL to transform and load data from the raw tables into the star schema.
 Example Star Schema Suggestion:
 •	Fact Tables:
 o	ShipmentFacts: shipmentIdentifier (PK), shipmentType, shipFromLocationKey (FK), shipToLocationKey (FK), vendorKey (FK), buyerKey (FK), carrierKey (FK), status, dateCreatedKey (FK),
@@ -42,9 +42,9 @@ o	DimDate: dateKey (PK), date, year, month, day, dayOfWeek.
 
 4. Load Data into Star Schema
 Task:
-•	Load the transformed data into the tables of your star schema (Populate GOLD tables from SILVER layer using SQL transformation scripts).
+•	Load the transformed data into the tables of your star schema (Populate GOLD tables from SILVER layer using PostgreSQL transformation scripts).
 
-5. Advanced SQL Queries
+5. Advanced PostgreSQL Queries
 Tasks:
 •	Using Stored Procedure: Calculate the total quantity of products planned per location for a given date range.
 •	Common Table Expression (CTE): Find the top 5 vendors with the most shipments in a specific region.
@@ -117,13 +117,35 @@ I would implement Slowly Changing Dimension (SCD) Type 2. This preserves histori
 ### What SQL techniques did you use to handle missing data?
 In this project, I used several SQL techniques to handle missing data, ensuring data quality and consistency:
 
-1. LTRIM(RTRIM(...)) - To remove unwanted leading and trailing spaces before checking for nulls or blanks.
+1. When loading my CSV I specified COPY bronze.product_v6
+FROM 'C:/path/product_v6.csv'
+DELIMITER ','
+CSV HEADER
+NULL '';
 
-2. NULLIF(..., '') - To convert empty strings to NULL for uniformity.
+2. Replacing missing values with defaults (COALESCE):
+   SELECT 
+         COALESCE(product_name, 'Unknown') AS product_name,
+         COALESCE(price, 0) AS price
+    FROM silver.product_v6;
 
-3. ISNULL(..., default_value) - To replace NULL with appropriate default values like 'UNKNOWN', 'N/A', or 0.00.
+3. Filtering out missing values (IS NULL / IS NOT NULL)
+   -- Find rows with missing organization names
+SELECT * 
+FROM bronze.organization_v3
+WHERE org_name IS NULL;
 
-4. CAST(... AS VARCHAR(MAX)) - To ensure a consistent datatype for string fields before transformations.
+4. UPDATE silver.location_v3
+SET city = 'Unknown'
+WHERE city IS NULL;
+
+5. Using CASE WHEN for conditional replacement
+   SELECT
+    CASE 
+        WHEN quantity IS NULL THEN 0
+        ELSE quantity
+    END AS clean_quantity
+FROM bronze.inventory_v2;
 
 These techniques collectively cleaned and standardised the data for loading into dimension and fact tables.
 
